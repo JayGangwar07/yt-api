@@ -22,6 +22,8 @@ const registerUser = asyncHandler( async(req,res) => {
     email,
     password,
     username,
+    avatar,
+    coverImg
   } = req.body
   
   if (
