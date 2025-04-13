@@ -18,12 +18,9 @@ const registerUser = asyncHandler( async(req,res) => {
   // return res
 
   const {
-    fullname,
-    email,
-    password,
-    username,
+    email
   } = req.body
-  
+  /*
   if (
     [fullname,email,password,username].some((i)=>i?.trim() === "")
     ) {
@@ -64,6 +61,7 @@ const registerUser = asyncHandler( async(req,res) => {
   const createdUser = await User.findById(user._id).select(
     "-password -refreshToken"
     )
+    */
 
   res.status(201).json({
     message: email
