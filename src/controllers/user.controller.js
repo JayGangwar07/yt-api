@@ -30,9 +30,9 @@ const registerUser = asyncHandler( async(req,res) => {
       throw new ApiError(400,"All Fields Required")
     }
     
-  const existed = User.findOne(
+  const existed = User.findOne({
     $or: [{username},{email}]
-    )
+    })
     
   if (existed) {
     throw new ApiError(409,"User With Same Email/Username Exists")
