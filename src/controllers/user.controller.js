@@ -18,8 +18,12 @@ const registerUser = asyncHandler( async(req,res) => {
   // return res
 
   const {
-    email
+    email,
+    password,
+    fullname,
+    username,
   } = req.body
+  
   /*
   if (
     [fullname,email,password,username].some((i)=>i?.trim() === "")
@@ -64,7 +68,10 @@ const registerUser = asyncHandler( async(req,res) => {
     */
 
   res.status(201).json({
-    message: email
+    "mail": email,
+    "pass": password,
+    "name": fullname,
+    "userTag": username,
   })
   
 } )
