@@ -22,17 +22,15 @@ const registerUser = asyncHandler( async(req,res) => {
     email,
     password,
     username,
-    avatar,
-    coverImg
   } = req.body
   
   if (
-    [fullname,email,password,username].some((i)=>i?.trim === "")
+    [fullname,email,password,username].some((i)=>i?.trim() === "")
     ) {
       throw new ApiError(400,"All Fields Required")
     }
     
-  const existed = User.findOne({
+  const existed = await User.findOne({
     $or: [{username},{email}]
     })
     
@@ -67,7 +65,7 @@ const registerUser = asyncHandler( async(req,res) => {
     "-password -refreshToken"
     )
 
-  res.status(200).json({
+  res.status(201).json({
     message: email
   })
   
