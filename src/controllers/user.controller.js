@@ -24,48 +24,12 @@ const registerUser = asyncHandler( async(req,res) => {
     username,
   } = req.body
   
-  /*
   if (
-    [fullname,email,password,username].some((i)=>i?.trim() === "")
-    ) {
-      throw new ApiError(400,"All Fields Required")
+    [email,password,fullname,username].some((field)=>field?.trim() === "")
+    ){
+      console.log("Inavlid Details")
+      throw new ApiError(401,"Invalid Details")
     }
-    
-  const existed = await User.findOne({
-    $or: [{username},{email}]
-    })
-    
-  if (existed) {
-    throw new ApiError(409,"User With Same Email/Username Exists")
-  }
-  
-  const avatarLocalPath = req.files?.avatar[0]?.path
-  const coverImgLocalPath = req.files?.coverImg[0]?.path
-  
-  if (!avatarLocalPath){
-    throw new ApiError(400,"Avatar Is Required")
-  }
-  
-  const avatarPath = await cloudinaryUpload(avatarLocalPath)
-  const coverImgPath = await cloudinaryUpload(coverImgLocalPath)
-  
-  if (!avatarPath){
-    throw new ApiError(400,"Avatar Is Required")
-  }
-  
-  const user = await User.create({
-    fullname,
-    avatar: avatarPath.url,
-    coverImg: coverImgPath?.url || "",
-    password,
-    email,
-    username: username.toLowerCase()
-  })
-  
-  const createdUser = await User.findById(user._id).select(
-    "-password -refreshToken"
-    )
-    */
 
   res.status(201).json({
     "mail": email,
