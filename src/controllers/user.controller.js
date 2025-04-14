@@ -15,7 +15,7 @@ const registerUser = asyncHandler( async(req,res) => {
   // Create User Object In db -> Done
   // Remove Password And Refresh Token From Response -> Done
   // Check If User was Created -> Done
-  // return res
+  // return res -> Done
 
   const {
     email,
@@ -104,9 +104,29 @@ const registerUser = asyncHandler( async(req,res) => {
 
 const loginUser = asyncHandler(async (req,res) => {
   
+  // Get Details From Frontend
+  // Validate Details
+  // Compare email and password
+  // Access And Refresh Token
+  // Send Cookies
+  
+  // Get Details From Frontend
+  
+  const {
+    password,
+  } = req.body
+  
+  /*if (!username && !email){
+    throw new ApiError(400, "Enter Either Email Or Username")
+  }*/
+  
+  res.status(201).json({
+    "password": password
+  })
+
 })
 
 export { 
   registerUser,
   loginUser
-  }
+}
