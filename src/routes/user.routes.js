@@ -22,6 +22,6 @@ router.post(
   registerUser
   )
   
-router.post("/login",loginUser)
+router.post("/login",upload.none(),loginUser)
 
 export default router

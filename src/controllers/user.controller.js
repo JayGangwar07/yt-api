@@ -4,6 +4,33 @@ import { User } from "../models/user.models.js"
 import {cloudinaryUpload} from "../utils/cloudinary.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 
+const genearateAccessAndRefreshTokens = async (userId) => {
+  
+  try{
+    
+    const user = await User.findById(userId)
+    
+    const accessToken = user.generateAccessToken()
+    const refreshToken = user.generateRefreshToken()
+    
+    user.refreshToken = refreshToken
+    
+    await user.save({validateBeforeSave: false})
+    
+
+    return {
+      accessToken,
+      refreshToken
+    }
+  }
+  
+  catch(error){
+    console.log(error)
+    throw new ApiError(500,"Couldn't Generate Tokens")
+  }
+  
+}
+
 const registerUser = asyncHandler( async(req,res) => {
   
 
@@ -104,25 +131,82 @@ const registerUser = asyncHandler( async(req,res) => {
 
 const loginUser = asyncHandler(async (req,res) => {
   
-  // Get Details From Frontend
-  // Validate Details
-  // Compare email and password
-  // Access And Refresh Token
+  // Get Details From Frontend -> Done
+  // Validate Details -> Done
+  // Compare email or username -> Done
+  // Access And Refresh Token -> Done
   // Send Cookies
   
   // Get Details From Frontend
   
   const {
+    username,
+    email,
     password,
   } = req.body
   
-  /*if (!username && !email){
+  if (!username && !email){
     throw new ApiError(400, "Enter Either Email Or Username")
-  }*/
+  }
   
-  res.status(201).json({
-    "password": password
+  // Validation
+  
+  if (
+    [email,password,username].some((field)=>field?.trim() === "")
+    ){
+      console.log("Inavlid Details")
+      throw new ApiError(411,"Invalid Details")
+    }
+    
+  // Compare Email Or Username
+  
+  const user = await User.findOne({
+    $or: [{ username },{ email }]
   })
+  
+  if (!user){
+    throw new ApiError(401,"No User With Given Data Exists")
+  }
+  
+  const isPasswordValid = await user.isPasswordCorrect(password)
+  
+  if (!isPasswordValid){
+    throw new ApiError(402,"Incorrect Password")
+  }
+  
+  const {accessToken,refreshToken} = await genearateAccessAndRefreshTokens(user._id)
+  
+  const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
+  
+  const options = {
+    httpOnly: true,
+    secure: true
+  }
+  
+  res.status(200)
+  .cookie("accessToken",accessToken,options)
+  .json(
+    new ApiResponse(200,
+    {
+      user: loggedInUser,refreshToken,accessToken
+    },
+    "Success!!!"
+    ))
+
+  /*return
+  res
+  .status(200)
+  .cookie("accessToken",accessToken,options)
+  .cookie("refreshToken",refreshToken,options)
+  .json(
+    new ApiResponse(
+      200,
+      {
+      user: loggedInUser,accessToken,refreshToken
+      },
+      "User Logged In Succesfully"
+      )
+    )*/
 
 })
 
