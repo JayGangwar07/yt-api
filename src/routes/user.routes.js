@@ -6,7 +6,6 @@ const router = Router()
 
 console.log("User Router Mounted")
 
-// Probably Error
 
 router.post(
   "/login",
