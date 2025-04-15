@@ -174,7 +174,7 @@ const loginUser = asyncHandler(async (req,res) => {
     throw new ApiError(402,"Incorrect Password")
   }
   
-  const {accessToken,refreshToken} = await genearateAccessAndRefreshTokens(user._id)
+  const {accessToken,newRefreshToken} = await genearateAccessAndRefreshTokens(user._id)
   
   const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
   
@@ -184,11 +184,12 @@ const loginUser = asyncHandler(async (req,res) => {
   }
   
   res.status(200)
+  .cookie("refreshToken",newRefreshToken,options)
   .cookie("accessToken",accessToken,options)
   .json(
     new ApiResponse(200,
     {
-      user: loggedInUser,refreshToken,accessToken
+      user: loggedInUser,newRefreshToken,accessToken
     },
     "Success!!!"
     ))
