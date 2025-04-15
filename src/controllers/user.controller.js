@@ -240,8 +240,53 @@ const logoutUser = asyncHandler(async(req,res) => {
   
 })
 
+const refreshAccessToken = asyncHandler(async(req,res) => {
+  
+  // Use Cookie To Access Token
+  
+  const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
+  
+  if (!incomingRefreshToken){
+    throw new ApiError(400,"No Refresh Token Found")
+  }
+  
+  const decodedToken = jwt.verify(
+    incomingRefreshToken,
+    process.env.REFRESH_TOKEN_SECREY
+    )
+    
+  const user = await User.findById(decodedToken?._id)
+  
+  if (!user){
+    throw new ApiError(400,"Inavalid Refresh Token")
+  }
+  
+  if (incomingRefreshToken !== user?.refreshToken){
+    throw new ApiError(400,"Inavlid Refresh Token")
+  }
+  const {accessToken,newRefreshToken} = await generateAccessAndRefreshTokens(user?._id)
+  
+  const options = {
+    httpOnly: true,
+    secure: true
+  }
+  
+  return res
+  .status(200)
+  .cookie("accessToken",accessToken,options)
+  .cookie("refreshToken",newRefreshToken,options)
+  .json(
+    new ApiResponse(200,{
+      accessToken,
+      newRefreshToken
+    },"Refreshed Tokens")
+    )
+  
+})
+
 export { 
   registerUser,
   loginUser,
-  logoutUser
+  logoutUser,
+  refreshAccessToken
 }
