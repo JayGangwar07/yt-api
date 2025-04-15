@@ -4,7 +4,7 @@ import { User } from "../models/user.models.js"
 import {cloudinaryUpload} from "../utils/cloudinary.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 
-const genearateAccessAndRefreshTokens = async (userId) => {
+const generateAccessAndRefreshTokens = async (userId) => {
   
   try{
     
@@ -174,7 +174,7 @@ const loginUser = asyncHandler(async (req,res) => {
     throw new ApiError(402,"Incorrect Password")
   }
   
-  const {accessToken,newRefreshToken} = await genearateAccessAndRefreshTokens(user._id)
+  const {accessToken,refreshToken} = await generateAccessAndRefreshTokens(user._id)
   
   const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
   
@@ -184,12 +184,12 @@ const loginUser = asyncHandler(async (req,res) => {
   }
   
   res.status(200)
-  .cookie("refreshToken",newRefreshToken,options)
+  .cookie("refreshToken",refreshToken,options)
   .cookie("accessToken",accessToken,options)
   .json(
     new ApiResponse(200,
     {
-      user: loggedInUser,newRefreshToken,accessToken
+      user: loggedInUser,refreshToken,accessToken
     },
     "Success!!!"
     ))
