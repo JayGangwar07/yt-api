@@ -269,12 +269,12 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       throw new ApiError(400,"Refresh Token Is Expired Or Used")
     }
     
-    const options = {
+    var options = {
       httpOnly: true,
       secure: true
     }
     
-    const {accessToken,newRefreshToken} =
+    var {accessToken,newRefreshToken} =
     generateAccessAndRefreshTokens(user?._id)
     
   }
