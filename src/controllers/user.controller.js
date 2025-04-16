@@ -243,11 +243,10 @@ const logoutUser = asyncHandler(async(req,res) => {
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
   
-  /*const incomingRefreshToken =
+  const incomingRefreshToken =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ZkMWIwMDc4ZGZmMTcyYWI0NWM4NmQiLCJpYXQiOjE3NDQ3NjYyMDQsImV4cCI6MTc0NTYzMDIwNH0.rSLb3qcmhnjG0PAFCFWvHqt0vXwCHrVQzzcW8q1QpAA"
-  */
   
-  const incomingRefreshToken = req.cookies?.refreshToken || req.body.refreshToken
+  /*const incomingRefreshToken = req.cookies?.refreshToken || req.body.refreshToken*/
   
   if (!incomingRefreshToken){
     throw new ApiError(400,"Unauthorised Request")
@@ -259,6 +258,16 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       incomingRefreshToken,
       process.env.REFRESH_TOKEN_SECRET
       )
+    
+    const user = await User.findById(decodedToken?._id)
+    
+    if (!user){
+      throw new ApiError(400,"Invalid Refresh Token")
+    }
+    
+    if (incomingRefreshToken !== user?.refreshToken){
+      throw new ApiError(400,"Refresh Token Is Expired Or Used")
+    }
     
   }
   
