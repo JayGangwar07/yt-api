@@ -243,10 +243,10 @@ const logoutUser = asyncHandler(async(req,res) => {
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
   
-  const incomingRefreshToken =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ZkMWIwMDc4ZGZmMTcyYWI0NWM4NmQiLCJpYXQiOjE3NDQ3NjYyMDQsImV4cCI6MTc0NTYzMDIwNH0.rSLb3qcmhnjG0PAFCFWvHqt0vXwCHrVQzzcW8q1QpAA"
-  
-  /*const incomingRefreshToken = req.cookies?.refreshToken || req.body.refreshToken*/
+  /*const incomingRefreshToken =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ZkMWIwMDc4ZGZmMTcyYWI0NWM4NmQiLCJpYXQiOjE3NDQ3OTc2MDUsImV4cCI6MTc0NTY2MTYwNX0.62qFAWdFiqfcHtgH8a0CFpVP5med-v6_UPTu29etyY4"
+  */
+  const incomingRefreshToken = req.cookies?.refreshToken || req.body.refreshToken
   
   if (!incomingRefreshToken){
     throw new ApiError(400,"Unauthorised Request")
@@ -269,6 +269,14 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       throw new ApiError(400,"Refresh Token Is Expired Or Used")
     }
     
+    const options = {
+      httpOnly: true,
+      secure: true
+    }
+    
+    const {accessToken,newRefreshToken} =
+    generateAccessAndRefreshTokens(user?._id)
+    
   }
   
   catch(error){
@@ -277,6 +285,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   
   return res
   .status(200)
+  .cookie("refreshToken",newRefreshToken,options)
+  .cookie("accessToken",accessToken,options)
   .json(
     new ApiResponse(200,{
       decodedToken,
