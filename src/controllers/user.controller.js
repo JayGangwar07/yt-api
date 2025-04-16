@@ -243,11 +243,11 @@ const logoutUser = asyncHandler(async(req,res) => {
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
   
-  /*const incomingRefreshToken =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ZkMWIwMDc4ZGZmMTcyYWI0NWM4NmQiLCJpYXQiOjE3NDQ3OTc2MDUsImV4cCI6MTc0NTY2MTYwNX0.62qFAWdFiqfcHtgH8a0CFpVP5med-v6_UPTu29etyY4"
-  */
+  const incomingRefreshToken =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ZkMWIwMDc4ZGZmMTcyYWI0NWM4NmQiLCJpYXQiOjE3NDQ4MTI3MzcsImV4cCI6MTc0NTY3NjczN30.g1eqjXdVJ4lDs6U7yDmO-Jh6wq6fPGhBYUeufDzfmms"
+  /*
   const incomingRefreshToken = req.cookies?.refreshToken || req.body.refreshToken
-  
+  */
   if (!incomingRefreshToken){
     throw new ApiError(400,"Unauthorised Request")
   }
@@ -261,21 +261,25 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     
     const user = await User.findById(decodedToken?._id)
     
+    console.log(user)
+    
     if (!user){
       throw new ApiError(400,"Invalid Refresh Token")
     }
-    
+    /*
     if (incomingRefreshToken !== user?.refreshToken){
       throw new ApiError(400,"Refresh Token Is Expired Or Used")
-    }
+    }*/
     
     var options = {
       httpOnly: true,
       secure: true
     }
     
-    var {accessToken,newRefreshToken} =
-    generateAccessAndRefreshTokens(user?._id)
+    var {accessToken,refreshToken} = await generateAccessAndRefreshTokens(user?._id)
+    
+    console.log("access",accessToken)
+    console.log(refreshToken)
     
   }
   
@@ -285,12 +289,14 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   
   return res
   .status(200)
-  .cookie("refreshToken",newRefreshToken,options)
+  .cookie("refreshToken",refreshToken,options)
   .cookie("accessToken",accessToken,options)
   .json(
     new ApiResponse(200,{
       decodedToken,
-      incomingRefreshToken
+      incomingRefreshToken,
+      refreshToken,
+      accessToken
     },"Refreshed Tokens")
     )
   
