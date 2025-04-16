@@ -243,38 +243,32 @@ const logoutUser = asyncHandler(async(req,res) => {
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
   
-
-  
-  const incomingRefreshToken = req.cookies?.refreshToken || req.body?.refreshToken
+  const incomingRefreshToken = req.body.refreshToken
   
   if (!incomingRefreshToken){
-    throw new ApiError(408,"Inavlid Request Token Not Found")
+    throw new ApiError(400,"Unauthorised Request")
   }
   
-  try{
-    /*const decodedToken = jwt.verify(
+  /*try{
+    
+    const decodedToken = jwt.verify(
       incomingRefreshToken,
       process.env.REFRESH_TOKEN_SECRET
       )
-      
-    const user = await User.findById(decodedToken?._id)
     
-    if (!user){
-      throw new ApiError(405,"Inavlid Refresh Token")
-    }
-    
-    if (user?.refreshToken !== decodedToken?.refreshToken){
-      throw new ApiError(405,"Refresh Token Is Expired Or Used")
-    }*/
   }
   
   catch(error){
-    throw new ApiError(403,"Refresh Error Found")
-  }
+    throw new ApiError(501,error?.message || "error")
+  }*/
   
-  return req.status(209).json({
-    incomingRefreshToken
-  })
+  return res
+  .status(200)
+  .json(
+    new ApiResponse(200,{
+      incomingRefreshToken
+    },"Refreshed Tokens")
+    )
   
 })
 
