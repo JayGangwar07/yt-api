@@ -243,15 +243,19 @@ const logoutUser = asyncHandler(async(req,res) => {
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
   
-  const incomingRefreshToken = req.body.refreshToken
+  /*const incomingRefreshToken =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2ZkMWIwMDc4ZGZmMTcyYWI0NWM4NmQiLCJpYXQiOjE3NDQ3NjYyMDQsImV4cCI6MTc0NTYzMDIwNH0.rSLb3qcmhnjG0PAFCFWvHqt0vXwCHrVQzzcW8q1QpAA"
+  */
+  
+  const incomingRefreshToken = req.cookies?.refreshToken || req.body.refreshToken
   
   if (!incomingRefreshToken){
     throw new ApiError(400,"Unauthorised Request")
   }
   
-  /*try{
+  try{
     
-    const decodedToken = jwt.verify(
+    var decodedToken = jwt.verify(
       incomingRefreshToken,
       process.env.REFRESH_TOKEN_SECRET
       )
@@ -260,12 +264,13 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   
   catch(error){
     throw new ApiError(501,error?.message || "error")
-  }*/
+  }
   
   return res
   .status(200)
   .json(
     new ApiResponse(200,{
+      decodedToken,
       incomingRefreshToken
     },"Refreshed Tokens")
     )
