@@ -302,9 +302,25 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   
 })
 
+const changeCurrentPassword = asyncHandler(async (req,res) => {
+  
+  const {oldPassword,newPassword} = req.body
+  
+  return req
+  .status(200)
+  .json(
+    new ApiResponse(200,{
+      oldPassword,
+      newPassword
+    },"Password Changed")
+    )
+  
+})
+
 export { 
   registerUser,
   loginUser,
   logoutUser,
-  refreshAccessToken
+  refreshAccessToken,
+  changeCurrentPassword
 }
