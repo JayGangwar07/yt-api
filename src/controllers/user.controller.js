@@ -306,7 +306,7 @@ const changeCurrentPassword = asyncHandler(async (req,res) => {
   
   const {oldPassword,newPassword} = req.body
   
-  return req
+  return res
   .status(200)
   .json(
     new ApiResponse(200,{

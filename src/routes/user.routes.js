@@ -31,7 +31,7 @@ router.post("/login",upload.none(),loginUser)
 
 router.post("/logout",verifyJwt,logoutUser)
 
-router.post("/password",verifyJwt,changeCurrentPassword)
+router.post("/password",changeCurrentPassword)
 
 router.post("/refresh",refreshAccessToken)
 
