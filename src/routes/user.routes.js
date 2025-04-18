@@ -1,6 +1,14 @@
 import { Router } from "express"
 import {
-registerUser,loginUser,logoutUser,refreshAccessToken,changeCurrentPassword,getCurrentUser,updateAccountDetails
+  registerUser,
+  loginUser,
+  logoutUser,
+  refreshAccessToken,
+  changeCurrentPassword,
+  getCurrentUser,
+  updateAccountDetails,
+  updateAvatar,
+  updateCoverImg
 } from
 "../controllers/user.controller.js"
 import { upload } from "../middlewares/multer.middlewares.js"
@@ -40,5 +48,8 @@ router.post("/user",verifyJwt,getCurrentUser)
 
 router.post("/update",verifyJwt,updateAccountDetails)
 
+router.post("/avatar",verifyJwt,upload.single("avatar"))
+
+router.post("/cover",verifyJwt,updateCoverImg)
 
 export default router

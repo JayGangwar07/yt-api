@@ -369,6 +369,71 @@ const updateAccountDetails = asyncHandler(async (req,res) => {
   
 })
 
+const updateAvatar = asyncHandler(async (req,res) => {
+  
+  const avatarLocalPath = req.file?.path
+  
+  if (!avatarLocalPath){
+    throw new ApiError(400,"Attach Avatar")
+  }
+  
+  const avatar = cloudinaryUpload(avatarLocalPath)
+  
+  if (!avatar.url){
+    throw new ApiError(400,"Error While Uploading On Cloudinary")
+  }
+  
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      $set: {
+        avatar: avatar.url
+      }
+    },
+    {new: true}
+    ).select("-password")
+  
+  return res
+  .status(200)
+  .json(
+    new ApiResponse(200,user,"Avatar Changed")
+    )
+  
+})
+
+
+const updateCoverImg = asyncHandler(async (req,res) => {
+  
+  const coverImgLocalPath = req.file?.path
+  
+  if (!avatarLocalPath){
+    throw new ApiError(400,"Attach Cover Image")
+  }
+  
+  const coverImg = cloudinaryUpload(coverImgLocalPath)
+  
+  if (!coverImg.url){
+    throw new ApiError(400,"Error While Uploading On Cloudinary")
+  }
+  
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      $set: {
+        coverImg: coverImg.url
+      }
+    },
+    {new: true}
+    ).select("-password")
+  
+  return res
+  .status(200)
+  .json(
+    new ApiResponse(200,user,"Cover Image Changed")
+    )
+  
+})
+
 export { 
   registerUser,
   loginUser,
@@ -377,4 +442,6 @@ export {
   changeCurrentPassword,
   getCurrentUser,
   updateAccountDetails,
+  updateAvatar,
+  updateCoverImg
 }
