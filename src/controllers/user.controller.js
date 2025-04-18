@@ -345,5 +345,6 @@ export {
   loginUser,
   logoutUser,
   refreshAccessToken,
-  changeCurrentPassword
+  changeCurrentPassword,
+  getCurrentUser,
 }
