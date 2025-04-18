@@ -48,8 +48,8 @@ router.post("/user",verifyJwt,getCurrentUser)
 
 router.post("/update",verifyJwt,updateAccountDetails)
 
-router.post("/avatar",verifyJwt,upload.single("avatar"))
+router.post("/avatar",verifyJwt,upload.single("avatar"),updateAvatar)
 
-router.post("/cover",verifyJwt,updateCoverImg)
+router.post("/cover",verifyJwt,upload.single("coverImg"),updateCoverImg)
 
 export default router
